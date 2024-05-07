@@ -4,13 +4,13 @@
 
 ```bash
 # frpc
-cp config/frpc.sample.ini config/frpc.ini
-emacs -nw config/frpc.ini
+cp config/frpc.sample.toml config/frpc.toml
+emacs -nw config/frpc.toml
 docker-compose up -d frpc
 
 # frps
-cp config/frps.sample.ini config/frps.ini
-emacs -nw config/frps.ini
+cp config/frps.sample.toml config/frps.toml
+emacs -nw config/frps.toml
 docker-compose up -d frps
 ```
 

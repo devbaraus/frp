@@ -1,7 +1,7 @@
-FROM alpine:3.10
-MAINTAINER Nyk Ma <i@nyk.ma>
+FROM alpine:3.19
+LABEL maintainer="Nyk Ma <i@nyk.ma>"
 
-ARG VERSION=0.46.0
+ARG VERSION=0.58.0
 
 WORKDIR /
 
@@ -16,9 +16,9 @@ RUN apk --no-cache add tar curl && \
 WORKDIR /frp
 
 RUN mkdir config log && \
-    mv *.ini config/ && \
-    ln -s config/frpc.ini ./frpc.ini && \
-    ln -s config/frps.ini ./frps.ini
+    mv *.toml config/ && \
+    ln -s config/frpc.toml ./frpc.toml && \
+    ln -s config/frps.toml ./frps.toml
 
 VOLUME /frp/config /frp/log
 
@@ -38,4 +38,4 @@ EXPOSE 7400
 # [frps] dashboard_port
 EXPOSE 7500
 
-ENTRYPOINT ["/frp/frpc", "-c", "/frp/frpc.ini"]
+ENTRYPOINT ["/frp/frpc", "-c", "/frp/frpc.toml"]
