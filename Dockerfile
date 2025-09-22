@@ -1,16 +1,17 @@
 FROM alpine:latest
 LABEL maintainer="Nyk Ma <i@nyk.ma>"
 
+ARG ARCH=arm64
 ARG VERSION=0.64.0
 
 WORKDIR /
 
 RUN apk --no-cache add tar curl && \
     curl -SLo frp.tar.gz \
-        "https://github.com/fatedier/frp/releases/download/v${VERSION}/frp_${VERSION}_linux_arm64.tar.gz" && \
+        "https://github.com/fatedier/frp/releases/download/v${VERSION}/frp_${VERSION}_linux_${ARCH}.tar.gz" && \
     tar -vxf frp.tar.gz && \
     ls -lah && \
-    mv "frp_${VERSION}_linux_arm64" frp && \
+    mv "frp_${VERSION}_linux_${ARCH}" frp && \
     rm frp.tar.gz
 
 WORKDIR /frp

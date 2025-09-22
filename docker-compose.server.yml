@@ -1,0 +1,41 @@
+services:
+  frps:
+    build: 
+      context: .
+      args:
+        ARCH: arm64
+    restart: unless-stopped
+    volumes:
+      - ./config:/frp/config
+      - ./log:/frp/log
+    ports:
+      - "7000:7000"     # bind_port
+      - "7000:7000/udp" # kcp_bind_port
+      - "7500:7500"     # dashboard_port
+#     - "80:80"   # vhost_http_port
+#     - "443:443" # vhost_https_port
+#     # WARNING: container up/down will be VERY SLOW (even failed)
+#     # if too much ports opened here!
+      - "20000-20020:2000-2020"
+    entrypoint:
+      - '/frp/frps'
+      - '-c'
+      - '/frp/frps.toml'
+    labels:
+      - traefik.docker.network=dokploy-network
+      - traefik.http.routers.zerun-infra-frp-25pi06-77-web.rule=Host(`frp.zerun.com.br`)
+      - traefik.http.routers.zerun-infra-frp-25pi06-77-web.entrypoints=web
+      - traefik.http.services.zerun-infra-frp-25pi06-77-web.loadbalancer.server.port=80
+      - traefik.http.routers.zerun-infra-frp-25pi06-77-web.service=zerun-infra-frp-25pi06-77-web
+      - traefik.http.routers.zerun-infra-frp-25pi06-77-web.middlewares=redirect-to-https@file
+      - traefik.http.routers.zerun-infra-frp-25pi06-77-websecure.rule=Host(`frp.zerun.com.br`)
+      - traefik.http.routers.zerun-infra-frp-25pi06-77-websecure.entrypoints=websecure
+      - traefik.http.services.zerun-infra-frp-25pi06-77-websecure.loadbalancer.server.port=80
+      - traefik.http.routers.zerun-infra-frp-25pi06-77-websecure.service=zerun-infra-frp-25pi06-77-websecure
+      - traefik.http.routers.zerun-infra-frp-25pi06-77-websecure.tls.certresolver=letsencrypt
+      - traefik.enable=true
+    networks:
+      - dokploy-network
+networks:
+  dokploy-network:
+    external: true
