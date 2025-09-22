@@ -1,16 +1,16 @@
-FROM alpine:3.19
+FROM alpine:latest
 LABEL maintainer="Nyk Ma <i@nyk.ma>"
 
-ARG VERSION=0.58.0
+ARG VERSION=0.64.0
 
 WORKDIR /
 
 RUN apk --no-cache add tar curl && \
     curl -SLo frp.tar.gz \
-        "https://github.com/fatedier/frp/releases/download/v${VERSION}/frp_${VERSION}_linux_amd64.tar.gz" && \
+        "https://github.com/fatedier/frp/releases/download/v${VERSION}/frp_${VERSION}_linux_arm64.tar.gz" && \
     tar -vxf frp.tar.gz && \
     ls -lah && \
-    mv "frp_${VERSION}_linux_amd64" frp && \
+    mv "frp_${VERSION}_linux_arm64" frp && \
     rm frp.tar.gz
 
 WORKDIR /frp
@@ -38,4 +38,4 @@ EXPOSE 7400
 # [frps] dashboard_port
 EXPOSE 7500
 
-ENTRYPOINT ["/frp/frpc", "-c", "/frp/frpc.toml"]
+ENTRYPOINT ["/frp/frps", "-c", "/frp/frps.toml"]

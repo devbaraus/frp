@@ -3,6 +3,8 @@ log/*
 
 config/frpc.ini
 config/frps.ini
+config/frp*.toml
+!config/frp*.sample.toml
 
 # emacs temp file
 .#*

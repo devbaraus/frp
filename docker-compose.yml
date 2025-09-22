@@ -1,20 +1,20 @@
 services:
-  frpc:
-    image: nykma/frp:0.58.0
-    restart: always
-    volumes:
-      - ./config:/frp/config
-      - ./log:/frp/log
-    extra_hosts:
-#     To visit host's port in a container,
-#     you should fill in the correct IP of your docker host.
-      - "dockerhost:192.168.0.64"
-#   ports:
-#     - "127.0.0.1:7400:7400" # admin_port
+#   frpc:
+#     image: nykma/frp:0.58.0
+#     restart: always
+#     volumes:
+#       - ./config:/frp/config
+#       - ./log:/frp/log
+#     extra_hosts:
+# #     To visit host's port in a container,
+# #     you should fill in the correct IP of your docker host.
+#       - "dockerhost:192.168.0.64"
+# #   ports:
+# #     - "127.0.0.1:7400:7400" # admin_port
 
   frps:
-    image: nykma/frp:0.58.0
-    restart: always
+    build: .
+    restart: unless-stopped
     volumes:
       - ./config:/frp/config
       - ./log:/frp/log
@@ -31,3 +31,21 @@ services:
       - '/frp/frps'
       - '-c'
       - '/frp/frps.toml'
+    labels:
+      - traefik.docker.network=dokploy-network
+      - traefik.http.routers.zerun-infra-frp-25pi06-77-web.rule=Host(`frp.zerun.com.br`)
+      - traefik.http.routers.zerun-infra-frp-25pi06-77-web.entrypoints=web
+      - traefik.http.services.zerun-infra-frp-25pi06-77-web.loadbalancer.server.port=80
+      - traefik.http.routers.zerun-infra-frp-25pi06-77-web.service=zerun-infra-frp-25pi06-77-web
+      - traefik.http.routers.zerun-infra-frp-25pi06-77-web.middlewares=redirect-to-https@file
+      - traefik.http.routers.zerun-infra-frp-25pi06-77-websecure.rule=Host(`frp.zerun.com.br`)
+      - traefik.http.routers.zerun-infra-frp-25pi06-77-websecure.entrypoints=websecure
+      - traefik.http.services.zerun-infra-frp-25pi06-77-websecure.loadbalancer.server.port=80
+      - traefik.http.routers.zerun-infra-frp-25pi06-77-websecure.service=zerun-infra-frp-25pi06-77-websecure
+      - traefik.http.routers.zerun-infra-frp-25pi06-77-websecure.tls.certresolver=letsencrypt
+      - traefik.enable=true
+    networks:
+      - dokploy-network
+networks:
+  dokploy-network:
+    external: true
